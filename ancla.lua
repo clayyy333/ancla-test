@@ -23,20 +23,19 @@ local soundId = "rbxassetid://115643345182540"
 
 local customSound = Instance.new("Sound")
 customSound.SoundId = soundId
-customSound.Volume = 0.7          -- Volumen inicial (puedes cambiarlo)
+customSound.Volume = 0.7
 customSound.Looped = false
 customSound.Parent = SoundService
 
 -- Reproducir automáticamente al ejecutar el script
 customSound:Play()
 
--- Fade out sutil: baja el volumen durante los últimos 2 segundos (del segundo 8 al 10)
+-- Fade out sutil
 task.delay(8, function()
     if customSound.IsPlaying then
         local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
         TweenService:Create(customSound, tweenInfo, {Volume = 0}):Play()
         
-        -- Detener el sonido completamente después del fade
         task.delay(2, function()
             if customSound then
                 customSound:Stop()
@@ -81,6 +80,7 @@ for i = 1, 4 do
     c.ZIndex = 1
     c.Parent = bg
     Instance.new("UICorner", c).CornerRadius = UDim.new(1, 0)
+    
     table.insert(comets, {
         frame = c,
         x = math.random(30, 290),
@@ -172,7 +172,9 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 mainFrame.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+        dragging = false 
+    end
 end)
 
 -- DRAG Restore Icon
@@ -194,7 +196,9 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 restoreIcon.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingIcon = false end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+        draggingIcon = false 
+    end
 end)
 
 -- Animación del fondo
@@ -279,9 +283,13 @@ local function deactivate()
     updateSwitch(false)
 end
 
-switchTrack.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        if enabled then deactivate() else activate() end
+-- ==================== FIX PARA CELULAR ====================
+-- Usamos .Activated en lugar de InputBegan + MouseButton1
+switchTrack.Activated:Connect(function()
+    if enabled then 
+        deactivate() 
+    else 
+        activate() 
     end
 end)
 
@@ -304,4 +312,4 @@ player.CharacterAdded:Connect(function()
     end
 end)
 
-print("✅ anclaTest cargado - Cometas diagonales MUY lentas")
+print("✅ anclaTest cargado con fix para celular - Toggle debería funcionar ahora en móvil")
