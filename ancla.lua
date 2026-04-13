@@ -1,4 +1,5 @@
 --// ANCLA TEST - ULTRA ANTI FLING (Cometas diagonales MUY lentas)
+-- Versión Híbrida: Funciona en Celular Real + Emulador
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
@@ -27,27 +28,21 @@ customSound.Volume = 0.7
 customSound.Looped = false
 customSound.Parent = SoundService
 
--- Reproducir automáticamente al ejecutar el script
 customSound:Play()
 
--- Fade out sutil
 task.delay(8, function()
     if customSound.IsPlaying then
         local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
         TweenService:Create(customSound, tweenInfo, {Volume = 0}):Play()
-        
         task.delay(2, function()
-            if customSound then
-                customSound:Stop()
-            end
+            if customSound then customSound:Stop() end
         end)
     end
 end)
 
 print("🔊 Reproduciendo audio (fade out sutil a los 8 segundos)")
---// =================================================================
 
---// GUI
+--// ==================== GUI ====================
 local sg = Instance.new("ScreenGui")
 sg.Name = "anclaTest"
 sg.ResetOnSpawn = false
@@ -60,9 +55,7 @@ mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
 
-local mainCorner = Instance.new("UICorner")
-mainCorner.CornerRadius = UDim.new(0, 18)
-mainCorner.Parent = mainFrame
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 18)
 
 -- Fondo animado
 local bg = Instance.new("Frame", mainFrame)
@@ -97,10 +90,7 @@ panel.Size = UDim2.new(1, -28, 0, 62)
 panel.Position = UDim2.new(0, 14, 0, 78)
 panel.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
 panel.ZIndex = 2
-
-local panelCorner = Instance.new("UICorner")
-panelCorner.CornerRadius = UDim.new(0, 12)
-panelCorner.Parent = panel
+Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 12)
 
 -- Texto "Activar ancla"
 local label = Instance.new("TextLabel", panel)
@@ -120,6 +110,7 @@ switchTrack.Size = UDim2.new(0, 46, 0, 24)
 switchTrack.Position = UDim2.new(1, -66, 0.5, -12)
 switchTrack.BackgroundColor3 = Color3.fromRGB(55, 55, 60)
 switchTrack.ZIndex = 3
+switchTrack.Active = true
 Instance.new("UICorner", switchTrack).CornerRadius = UDim.new(1, 0)
 
 local switchKnob = Instance.new("Frame", switchTrack)
@@ -153,7 +144,7 @@ restoreIcon.Font = Enum.Font.GothamBold
 restoreIcon.Visible = false
 Instance.new("UICorner", restoreIcon).CornerRadius = UDim.new(0, 14)
 
--- DRAG Main Frame
+-- DRAG (sin cambios)
 local dragging = false
 local dragStart, startPos
 mainFrame.InputBegan:Connect(function(input)
@@ -172,12 +163,10 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 mainFrame.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
-        dragging = false 
-    end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
 end)
 
--- DRAG Restore Icon
+-- DRAG Restore Icon (sin cambios)
 local draggingIcon = false
 local dragStartIcon, startPosIcon
 restoreIcon.InputBegan:Connect(function(input)
@@ -196,9 +185,7 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 restoreIcon.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then 
-        draggingIcon = false 
-    end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingIcon = false end
 end)
 
 -- Animación del fondo
@@ -231,7 +218,7 @@ local function updateSwitch(on)
     end
 end
 
--- Lógica Anti-Fling
+-- Lógica Anti-Fling (sin cambios)
 local function getRoot()
     local char = player.Character
     return char and char:FindFirstChild("HumanoidRootPart")
@@ -283,16 +270,20 @@ local function deactivate()
     updateSwitch(false)
 end
 
--- ==================== FIX PARA CELULAR ====================
--- Usamos .Activated en lugar de InputBegan + MouseButton1
-switchTrack.Activated:Connect(function()
-    if enabled then 
-        deactivate() 
-    else 
-        activate() 
+-- ==================== FIX HÍBRIDO (Emulador + Celular Real) ====================
+switchTrack.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 
+       or input.UserInputType == Enum.UserInputType.Touch then
+        
+        if enabled then 
+            deactivate() 
+        else 
+            activate() 
+        end
     end
 end)
 
+-- Botones minimizar y restaurar
 minimizeBtn.MouseButton1Click:Connect(function()
     mainFrame.Visible = false
     restoreIcon.Visible = true
@@ -312,4 +303,4 @@ player.CharacterAdded:Connect(function()
     end
 end)
 
-print("✅ anclaTest cargado con fix para celular - Toggle debería funcionar ahora en móvil")
+print("✅ anclaTest cargado - Fix híbrido para Emulador + Celular Real")
