@@ -47,6 +47,20 @@ mainFrame.BackgroundColor3 = Color3.fromRGB(15,15,20)
 mainFrame.Active = true
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0,18)
 
+-- ==================== TEXTO AÑADIDO ====================
+local versionText = Instance.new("TextLabel", mainFrame)
+versionText.Size = UDim2.new(0,220,0,14)
+versionText.Position = UDim2.new(0,12,0,24)
+versionText.BackgroundTransparency = 1
+versionText.Text = "v1 por @intensiveee (RyanGosling)"
+versionText.TextColor3 = Color3.fromRGB(180,180,180)
+versionText.TextXAlignment = Enum.TextXAlignment.Left
+versionText.Font = Enum.Font.Gotham
+versionText.TextSize = 10
+versionText.ZIndex = 1
+versionText.Active = false
+-- ====================================================
+
 local borderLayers = {}
 for i=1,3 do
 	local b = Instance.new("Frame")
@@ -382,6 +396,3 @@ RunService.Stepped:Connect(function()
 end)
 
 print(" ANTISEAT PREVENTIVO + CORRECTIVO + HARD LOCK ")
-
-
-
